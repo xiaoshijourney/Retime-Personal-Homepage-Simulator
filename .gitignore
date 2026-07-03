@@ -1,0 +1,9 @@
+
+# 忽略所有
+*
+
+# 不忽略 .gitignore 自己
+!.gitignore
+
+# 不忽略你要上传的文件
+!README.md
