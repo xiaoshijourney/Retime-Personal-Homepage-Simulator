@@ -10,6 +10,7 @@ class ContentCard extends StatelessWidget {
   final VoidCallback? onTagTap;
   final VoidCallback? onTimeTap;
   final VoidCallback? onImageTap;
+  final VoidCallback? onLongPress;
 
   const ContentCard({
     super.key,
@@ -20,11 +21,12 @@ class ContentCard extends StatelessWidget {
     this.onTagTap,
     this.onTimeTap,
     this.onImageTap,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    Widget card = Container(
       color: Colors.white,
       child: Column(
         children: [
@@ -118,6 +120,13 @@ class ContentCard extends StatelessWidget {
         ],
       ),
     );
+    if (editable && onLongPress != null) {
+      card = GestureDetector(
+        onLongPress: onLongPress,
+        child: card,
+      );
+    }
+    return card;
   }
 }
 
@@ -185,12 +194,16 @@ class _EditableTag extends StatelessWidget {
     if (!editable) return child;
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue.withAlpha(80), width: 1),
-          borderRadius: BorderRadius.circular(4),
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue.withAlpha(80), width: 1),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: child,
         ),
-        child: child,
       ),
     );
   }
