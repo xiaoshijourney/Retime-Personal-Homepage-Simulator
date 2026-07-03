@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   final bool isLocked;
@@ -242,6 +244,21 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Future<void> _launchURL() async {
+    try {
+      await launchUrl(
+        Uri.parse('https://github.com/xiaoshijourney/Retime-Personal-Homepage-Simulator'),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('无法打开链接')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -249,7 +266,12 @@ class _SettingsPageState extends State<SettingsPage> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _apply();
       },
-      child: Scaffold(
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+        child: Scaffold(
         appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.chevron_left),
@@ -389,8 +411,59 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          // ═══════ GitHub ═══════
+          const SizedBox(height: 28),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: AssetImage('lib/my_res/avatar.png'),
+              ),
+              const SizedBox(width: 4),
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: AssetImage('lib/my_res/xiaoshi.png'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Divider(indent: 32, endIndent: 32),
+          const SizedBox(height: 12),
+          InkWell(
+            onTap: _launchURL,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF333333),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.code, size: 16, color: Colors.white),
+                  ),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'xiaoshijourney / Retime-Personal-Homepage-Simulator',
+                      style: TextStyle(fontSize: 13, color: Color(0xFF666666)),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.open_in_new, size: 14, color: Color(0xFF999999)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
         ],
+      ),
       ),
     ),
     );

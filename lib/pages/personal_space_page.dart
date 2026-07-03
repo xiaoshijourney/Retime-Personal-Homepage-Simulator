@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/content_item.dart';
 import '../widgets/content_card.dart';
+import '../utils/auth.dart';
 import 'settings_page.dart';
 
 class PersonalSpacePage extends StatefulWidget {
@@ -23,6 +25,10 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
 
   // 编辑模式（开关控制）
   bool _editMode = false;
+
+  // 头像连点暗门
+  int _avatarTapCount = 0;
+  Timer? _avatarTapTimer;
 
   // 标签库
   final List<String> _predefinedTags = ['学习打卡', '劳动打卡'];
@@ -101,6 +107,7 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
 
   @override
   void dispose() {
+    _avatarTapTimer?.cancel();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
@@ -116,7 +123,52 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
 
   // ── 打开设置页 ──
   void _openSettings() async {
+    // 今日口令验证
+    if (!await isTodayAuthenticated()) {
+      if (!mounted) return;
+      final ctrl = TextEditingController();
+      final ok = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('验证'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('请输入今日口令'),
+              const SizedBox(height: 12),
+              TextField(
+                controller: ctrl,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: '6位数字口令',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
+            ElevatedButton(
+              onPressed: () {
+                if (ctrl.text.trim() == generateDailyCode()) {
+                  Navigator.pop(ctx, true);
+                } else {
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(content: Text('口令错误')),
+                  );
+                }
+              },
+              child: const Text('确定'),
+            ),
+          ],
+        ),
+      );
+      if (ok != true) return;
+      await markTodayAuthenticated();
+    }
+
     final parts = _infoText.split('|').map((s) => s.trim()).toList();
+    if (!mounted) return;
     final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(builder: (_) => SettingsPage(
@@ -545,6 +597,28 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
     );
   }
 
+  void _onAvatarTap() {
+    _avatarTapCount++;
+    _avatarTapTimer?.cancel();
+    if (_avatarTapCount >= 15) {
+      _avatarTapCount = 0;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('今日口令'),
+          content: Text(generateDailyCode(), style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 6)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('关闭')),
+          ],
+        ),
+      );
+    } else {
+      _avatarTapTimer = Timer(const Duration(seconds: 2), () {
+        _avatarTapCount = 0;
+      });
+    }
+  }
+
   // ══════════════════════════════════════════════
   Widget _buildCover(double statusBarHeight) {
     final isDefaultCover = _coverPath == 'lib/my_res/avatar.png';
@@ -578,6 +652,11 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
     if (_editMode) {
       avatar = GestureDetector(
         onTap: () => _pickImage((v) => _avatarPath = v),
+        child: avatar,
+      );
+    } else {
+      avatar = GestureDetector(
+        onTap: _onAvatarTap,
         child: avatar,
       );
     }
