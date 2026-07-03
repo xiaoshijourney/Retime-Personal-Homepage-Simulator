@@ -251,11 +251,11 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
         Text(_nickname, style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold)),
         const SizedBox(width: 6),
         Transform.translate(
-          offset: const Offset(0, 3),
+          offset: const Offset(6, 3),
           child: Image.asset('lib/my_res/vip1.png', width: 20, height: 20),
         ),
         Transform.translate(
-          offset: const Offset(-6, 3),
+          offset: const Offset(0, 3),
           child: Image.asset('lib/my_res/vip2.png', width: 50, height: 20),
         ),
       ],
@@ -303,7 +303,7 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
         coverImage,
         Positioned(top: statusBarHeight + _avatarTopOffset + 5, left: 35, child: avatar),
         Positioned(top: statusBarHeight + _avatarTopOffset + 10, left: 130, child: nickname),
-        Positioned(top: statusBarHeight + _avatarTopOffset + 110, left: 20, right: 20, child: infoRow),
+        Positioned(top: statusBarHeight + _avatarTopOffset + 115, left: 20, right: 20, child: infoRow),
       ],
     );
   }

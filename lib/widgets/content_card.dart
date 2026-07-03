@@ -28,15 +28,15 @@ class ContentCard extends StatelessWidget {
       children: [
         Container(
           color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 100),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 7,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 18, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
@@ -45,50 +45,60 @@ class ContentCard extends StatelessWidget {
                           text: item.title,
                           editable: editable,
                           onTap: onTitleTap,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 17,
                             color: Color(0xFF000000),
                           ),
                         ),
+                        const SizedBox(height: 26),
                         Transform.translate(
-                          offset: const Offset(0, -25),
-                          child: _EditableText(
-                            text: item.userInfo,
-                            editable: editable,
-                            onTap: onUserInfoTap,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Color.fromARGB(160, 136, 136, 136),
-                            ),
+                          offset: const Offset(0, 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _EditableText(
+                                text: item.userInfo,
+                                editable: editable,
+                                onTap: onUserInfoTap,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromARGB(160, 136, 136, 136),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  _EditableTag(
+                                    text: item.tag,
+                                    editable: editable,
+                                    onTap: onTagTap,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  _EditableText(
+                                    text: item.time,
+                                    editable: editable,
+                                    onTap: onTimeTap,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromARGB(164, 136, 136, 136),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            _EditableTag(
-                              text: item.tag,
-                              editable: editable,
-                              onTap: onTagTap,
-                            ),
-                            const SizedBox(width: 6),
-                            _EditableText(
-                              text: item.time,
-                              editable: editable,
-                              onTap: onTimeTap,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF888888),
-                              ),
-                            ),
-                          ],
-                        ),
+
                       ],
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 12, top: 12),
+                  padding: const EdgeInsets.only(right: 8, top: 8),
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 0, bottom: 40),
+                    padding: const EdgeInsets.only(right: 0, bottom:25),
                     child: _EditableImage(
                       imageUrl: item.imageUrl,
                       editable: editable,
@@ -100,7 +110,10 @@ class ContentCard extends StatelessWidget {
             ),
           ),
         ),
-        const Divider(height: 1, color: Color(0xFFEEEEEE)),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Divider(height: 1, color: Color(0xFFEEEEEE)),
+        ),
       ],
     );
   }
@@ -112,17 +125,21 @@ class _EditableText extends StatelessWidget {
   final bool editable;
   final VoidCallback? onTap;
   final TextStyle style;
+  final int? maxLines;
+  final TextOverflow? overflow;
 
   const _EditableText({
     required this.text,
     required this.editable,
     this.onTap,
     required this.style,
+    this.maxLines,
+    this.overflow,
   });
 
   @override
   Widget build(BuildContext context) {
-    final child = Text(text, style: style);
+    final child = Text(text, style: style, maxLines: maxLines, overflow: overflow);
     if (!editable) return child;
     return GestureDetector(
       onTap: onTap,
@@ -160,7 +177,7 @@ class _EditableTag extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 10, color: Color.fromARGB(255, 52, 51, 51)),
+        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color.fromARGB(150, 52, 51, 51)),
       ),
     );
     if (!editable) return child;
@@ -192,8 +209,8 @@ class _EditableImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = imageUrl.startsWith('lib/')
-        ? Image.asset(imageUrl, width: 40 * 2.6, height: 32 * 2.6, fit: BoxFit.cover)
-        : Image.file(File(imageUrl), width: 40 * 2.6, height: 32 * 2.6, fit: BoxFit.cover);
+        ? Image.asset(imageUrl, width: 40 * 2.8, height: 32 * 2.8, fit: BoxFit.cover)
+        : Image.file(File(imageUrl), width: 40 * 2.8, height: 32 * 2.8, fit: BoxFit.cover);
     if (!editable) return child;
     return GestureDetector(
       onTap: onTap,
