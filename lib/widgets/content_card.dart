@@ -24,11 +24,11 @@ class ContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: Colors.white,
-          child: ConstrainedBox(
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 100),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -41,15 +41,18 @@ class ContentCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _EditableText(
-                          text: item.title,
-                          editable: editable,
-                          onTap: onTitleTap,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            color: Color(0xFF000000),
+                        Transform.translate(
+                          offset: const Offset(0, -3),
+                          child: _EditableText(
+                            text: item.title,
+                            editable: editable,
+                            onTap: onTitleTap,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              color: Color(0xFF000000),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 26),
@@ -75,7 +78,7 @@ class ContentCard extends StatelessWidget {
                                     editable: editable,
                                     onTap: onTagTap,
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 6),
                                   _EditableText(
                                     text: item.time,
                                     editable: editable,
@@ -90,7 +93,6 @@ class ContentCard extends StatelessWidget {
                             ],
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -98,7 +100,7 @@ class ContentCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8, top: 8),
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 0, bottom:25),
+                    padding: const EdgeInsets.only(right: 0, bottom: 25),
                     child: _EditableImage(
                       imageUrl: item.imageUrl,
                       editable: editable,
@@ -109,12 +111,12 @@ class ContentCard extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Divider(height: 1, color: Color(0xFFEEEEEE)),
-        ),
-      ],
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Divider(height: 1, color: Color(0xFFEEEEEE)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -170,14 +172,14 @@ class _EditableTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = Container(
-      padding: const EdgeInsets.only(left: 4, right: 4, top: 1, bottom: 3),
+      padding: const EdgeInsets.only(left: 4.5, right: 4.5, top: 1, bottom: 2),
       decoration: BoxDecoration(
         color: const Color(0xFFEEEEEE),
         borderRadius: BorderRadius.circular(3),
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color.fromARGB(150, 52, 51, 51)),
+        style: const TextStyle(fontSize: 9.6, fontWeight: FontWeight.bold, color: Color.fromARGB(149, 76, 75, 75)),
       ),
     );
     if (!editable) return child;

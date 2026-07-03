@@ -64,11 +64,37 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
 
   // ── 打开设置页 ──
   void _openSettings() async {
-    final result = await Navigator.push<bool>(
+    final parts = _infoText.split('|').map((s) => s.trim()).toList();
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
-      MaterialPageRoute(builder: (_) => SettingsPage(isLocked: _editMode)),
+      MaterialPageRoute(builder: (_) => SettingsPage(
+        isLocked: _editMode,
+        name: _nickname,
+        school: parts.isNotEmpty ? parts[0] : '',
+        college: parts.length > 1 ? parts[1] : '',
+      )),
     );
-    if (result != null) setState(() => _editMode = result);
+    if (result != null) {
+      setState(() {
+        _editMode = result['locked'] ?? _editMode;
+        _nickname = result['name'] ?? _nickname;
+        final s = result['school'] ?? parts[0];
+        final c = result['college'] ?? (parts.length > 1 ? parts[1] : '');
+        final rest = parts.length > 2 ? parts.sublist(2).join(' | ') : '';
+        _infoText = rest.isNotEmpty ? '$s | $c | $rest' : '$s | $c';
+        // 更新卡片数据
+        for (int i = 0; i < _items.length; i++) {
+          final old = _items[i];
+          _items[i] = ContentItem(
+            title: old.title,
+            userInfo: '$_nickname $s $c',
+            tag: old.tag,
+            time: old.time,
+            imageUrl: old.imageUrl,
+          );
+        }
+      });
+    }
   }
 
   // ── 编辑文字弹窗 ──
@@ -135,36 +161,36 @@ class _PersonalSpacePageState extends State<PersonalSpacePage> {
               ),
               Container(
                 color: const Color.fromARGB(245,247,247, 249),
-                child: Column(
-                  children: [
-                    for (int i = 0; i < _items.length; i++)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: ContentCard(
-                          item: _items[i],
-                          editable: _editMode,
-                          onTitleTap: () => _editText(
-                            '编辑标题', _items[i].title,
-                            (v) => _updateItem(i, ContentItem(title: v, userInfo: _items[i].userInfo, tag: _items[i].tag, time: _items[i].time, imageUrl: _items[i].imageUrl)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < _items.length; i++)
+                        ContentCard(
+                            item: _items[i],
+                            editable: _editMode,
+                            onTitleTap: () => _editText(
+                              '编辑标题', _items[i].title,
+                              (v) => _updateItem(i, ContentItem(title: v, userInfo: _items[i].userInfo, tag: _items[i].tag, time: _items[i].time, imageUrl: _items[i].imageUrl)),
+                            ),
+                            onUserInfoTap: () => _editText(
+                              '编辑署名', _items[i].userInfo,
+                              (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: v, tag: _items[i].tag, time: _items[i].time, imageUrl: _items[i].imageUrl)),
+                            ),
+                            onTagTap: () => _editText(
+                              '编辑标签', _items[i].tag,
+                              (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: _items[i].userInfo, tag: v, time: _items[i].time, imageUrl: _items[i].imageUrl)),
+                            ),
+                            onTimeTap: () => _editText(
+                              '编辑时间', _items[i].time,
+                              (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: _items[i].userInfo, tag: _items[i].tag, time: v, imageUrl: _items[i].imageUrl)),
+                            ),
+                            onImageTap: () => _pickImage(
+                              (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: _items[i].userInfo, tag: _items[i].tag, time: _items[i].time, imageUrl: v)),
+                            ),
                           ),
-                          onUserInfoTap: () => _editText(
-                            '编辑署名', _items[i].userInfo,
-                            (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: v, tag: _items[i].tag, time: _items[i].time, imageUrl: _items[i].imageUrl)),
-                          ),
-                          onTagTap: () => _editText(
-                            '编辑标签', _items[i].tag,
-                            (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: _items[i].userInfo, tag: v, time: _items[i].time, imageUrl: _items[i].imageUrl)),
-                          ),
-                          onTimeTap: () => _editText(
-                            '编辑时间', _items[i].time,
-                            (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: _items[i].userInfo, tag: _items[i].tag, time: v, imageUrl: _items[i].imageUrl)),
-                          ),
-                          onImageTap: () => _pickImage(
-                            (v) => _updateItem(i, ContentItem(title: _items[i].title, userInfo: _items[i].userInfo, tag: _items[i].tag, time: _items[i].time, imageUrl: v)),
-                          ),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
