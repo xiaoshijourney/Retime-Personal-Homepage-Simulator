@@ -2,6 +2,8 @@
 
 仿校园社交平台 UI 的个人主页 App，支持自定义资料、动态卡片、标签管理等。
 
+🌐 **在线体验**: [xiaoshijourney.hepi.ng](https://xiaoshijourney.hepi.ng/)
+
 ## 🏫 一键宿舍打卡
 
 输入年份和月份，自动随机生成 7 天 × 2 次 = 14 张宿舍打卡卡片，学习打卡 + 劳动打卡各半，时间随机分布，省去手动填写的繁琐。
@@ -38,6 +40,8 @@
 ## 下载
 
 > [点击下载最新版本](https://github.com/xiaoshijourney/Retime-Personal-Homepage-Simulator/releases)
+
+欢迎下载体验，有问题可以在 [Issues](https://github.com/xiaoshijourney/Retime-Personal-Homepage-Simulator/issues) 提出。
 
 ## 技术栈
 
