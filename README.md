@@ -1,5 +1,6 @@
 # Retime - 个人主页模拟器
 
+目前软件处于测试阶段，自定义设置需要口令，联系作者邮箱获取：xiaoshijourney@163.com
 仿校园社交平台 UI 的个人主页 App，支持自定义资料、动态卡片、标签管理等。
 
 🌐 **在线体验**: [xiaoshijourney.hepi.ng](https://xiaoshijourney.hepi.ng/)
