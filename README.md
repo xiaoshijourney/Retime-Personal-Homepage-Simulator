@@ -4,7 +4,7 @@
 
 仿校园社交平台 UI 的个人主页 App，支持自定义资料、动态卡片、标签管理等。
 
-🌐 **在线体验**: [xiaoshijourney.hepi.ng](https://xiaoshijourney.hepi.ng/)
+🌐 **在线体验**: [www.xiaoshijourney.com](https://www.xiaoshijourney.com/)
 
 ## 🏫 一键宿舍打卡
 
